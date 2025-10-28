@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'favicon.png' %}" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}{% endblock title %} | Marketplace</title>
+    <style>
+        /* Add custom styling if needed */
+    </style>
+</head>
+<body class="dark:bg-gray-900">
+    <nav class="dark:text-white py-6 sm:px-6 w-full flex flex-wrap justify-between items-center border-b border-gray-200">
+        <a href="/" class="md:text-xl font-semibold">DrukWheels<span class="font-light"> | {{ request.user.username }}</span></a>
+        <button id="menu-toggle" class="block sm:hidden">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+        <div id="menu" class="hidden sm:flex sm:space-x-6">
+            <a href="{% url 'item:new' %}" class="m-3 sm:text-lg font-semibold hover:text-gray-500">Add Listing</a>
+            <a href="{% url 'item:items' %}" class="m-3 sm:text-lg font-semibold hover:text-gray-500">Browse</a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'conversation:inbox' %}" class="px-6 sm:py-3 sm:text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Inbox</a>
+                <a href="{% url 'dashboard:index' %}" class="px-6 sm:py-3 sm:text-lg font-semibold bg-gray-500 text-white rounded-xl hover:bg-gray-700">Dashboard</a>
+                <a href="{% url 'core:logout' %}" class="px-3 sm:py-3 sm:text-lg font-semibold bg-red-500 text-white rounded-xl hover:bg-red-700">Logout</a>
+            {% else %}
+                <a href="{% url 'core:signup' %}" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Sign up</a>
+                <a href="{% url 'core:login' %}" class="px-6 py-3 text-lg font-semibold bg-gray-500 text-white rounded-xl hover:bg-gray-700">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div id="mobile-menu" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 hidden">
+        <div class="flex flex-col items-center justify-center h-full space-y-6 text-white">
+            <a href="{% url 'item:new' %}" class="text-lg font-semibold hover:text-gray-500">Add Listing</a>
+            <a href="{% url 'item:items' %}" class="text-lg font-semibold hover:text-gray-500">Browse</a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'conversation:inbox' %}" class="text-lg font-semibold bg-teal-500 py-3 px-6 rounded-xl hover:bg-teal-700">Inbox</a>
+                <a href="{% url 'dashboard:index' %}" class="text-lg font-semibold bg-gray-500 py-3 px-6 rounded-xl hover:bg-gray-700">Dashboard</a>
+                <a href="{% url 'core:logout' %}" class="text-lg font-semibold bg-red-500 py-3 px-6 rounded-xl hover:bg-red-700">Logout</a>
+            {% else %}
+                <a href="{% url 'core:signup' %}" class="text-lg font-semibold bg-teal-500 py-3 px-6 rounded-xl hover:bg-teal-700">Sign up</a>
+                <a href="{% url 'core:login' %}" class="text-lg font-semibold bg-gray-500 py-3 px-6 rounded-xl hover:bg-gray-700">Login</a>
+            {% endif %}
+            <button id="menu-close" class="absolute top-6 right-6">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="px-6 py-6">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer class="py-6 px-6 flex justify-between bg-gray-800">
+        <div>
+            <h3 class="mb-5 font-semibold text-gray-400">About</h3>
+            <p class="text-lg text-gray-500 break-words">
+                Experience the convenience of buying and selling secondhand cars with DrukWheels. Sign up today, list your car, or find your next vehicle with ease. Let us help you drive towards a better future with confidence and peace of mind.
+
+                For more information, feel free to explore our website or contact our support team. Welcome to DrukWheels– your trusted partner in the Bhutanese secondhand car market!
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.remove('hidden');
+        });
+        document.getElementById('menu-close').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
