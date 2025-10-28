@@ -24,7 +24,9 @@ class DashboardTests(TestCase):
         self.assertTrue(Category.objects.filter(name='NewCategory').exists())
 
     def test_promote_user(self):
-        response = self.client.post(reverse('dashboard:promote', args=[self.user.id]))
-        self.user.refresh_from_db()
-        self.assertTrue(self.user.is_staff)
-        self.assertTrue(self.user.is_superuser)
+        # Create a regular user to promote
+        regular_user = User.objects.create_user(username='regular', password='12345')
+        response = self.client.post(reverse('dashboard:promote', args=[regular_user.id]))
+        regular_user.refresh_from_db()
+        self.assertTrue(regular_user.is_staff)
+        self.assertTrue(regular_user.is_superuser)
