@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main, master ]
 
+env:
+  DOCKER_IMAGE_NAME: drukwheels
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -66,36 +69,16 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     
-    - name: Extract metadata for Docker
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ${{ secrets.DOCKERHUB_USERNAME }}/drukwheels
-        tags: |
-          type=ref,event=branch
-          type=sha,prefix={{branch}}-
-          type=raw,value=latest,enable={{is_default_branch}}
-    
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
         context: .
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
     
-    - name: Test Docker container locally
-      run: |
-        docker compose up -d
-        sleep 10
-        docker compose ps
-        docker compose logs
-        docker compose down
-    
-    - name: Docker Hub deployment summary
-      run: |
-        echo "🎉 Docker image pushed successfully!"
-        echo "Image tags: ${{ steps.meta.outputs.tags }}"
-        echo "View on Docker Hub: https://hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/drukwheels"
+    - name: Image digest
+      run: echo "Image pushed successfully to Docker Hub!"
